@@ -1,5 +1,6 @@
 package com.pg
 
+import org.apache.spark.rdd.RDD
 import org.apache.spark.sql.hive.HiveContext
 import org.apache.spark.{SparkConf, SparkContext}
 
@@ -17,13 +18,17 @@ object TestApp {
     import sqlContext.implicits._
   }
 
-  def testCount(sqlContext: HiveContext): Long = {
+  def testCountHive(sqlContext: HiveContext): Long = {
     val stmt =
       s"""
          SELECT * FROM data.test
        """.stripMargin
 
     sqlContext.sql(stmt).count()
+  }
+
+  def testCountRDD(rdd: RDD[Int]): Long = {
+      rdd.count()
   }
 
 }

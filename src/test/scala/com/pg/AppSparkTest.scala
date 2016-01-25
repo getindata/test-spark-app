@@ -3,7 +3,7 @@ package com.pg
 import org.apache.spark.sql.hive.test.TestHiveContext
 import org.scalatest._
 
-class AppIntTest extends FunSuite with BeforeAndAfterAll with BeforeAndAfter with Matchers {
+class AppSparkTest extends FunSuite with BeforeAndAfterAll with BeforeAndAfter with Matchers {
 
   var sqlContext: TestHiveContext = _
 
@@ -21,12 +21,17 @@ class AppIntTest extends FunSuite with BeforeAndAfterAll with BeforeAndAfter wit
                     """)
   }
 
-  test("test spark int") {
+  test("test with Hive") {
       sqlContext.sql("""LOAD DATA LOCAL INPATH 'src/test/resources/test.txt'
          OVERWRITE INTO TABLE data.test""")
 
-      val cnt = TestApp.testCount(sqlContext)
+      val cnt = TestApp.testCountHive(sqlContext)
 
       cnt shouldEqual 3
     }
+
+  test("test RDD") {
+      val rdd = sqlContext.sparkContext.parallelize(Array(1, 2, 3, 4))
+      TestApp.testCountRDD(rdd) shouldEqual 4
+  }
 }
